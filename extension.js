@@ -36,7 +36,7 @@ let filePath;	// Tasks file path
 function TasksManager(metadata)
 {
 	// File in home directory
-	filePath = GLib.get_home_dir() + "/.list.tasks";
+	filePath = GLib.get_home_dir() + "/tasks/tasks";
 
 	let locales = metadata.path + "/locale";
 	Gettext.bindtextdomain('todolist', locales);
@@ -116,11 +116,15 @@ TasksManager.prototype =
 			
 			for (let i=0; i<lines.length; i++)
 			{
+				let line = lines[i];
+				let strip_after = 0;
 				// if not empty
-				if (lines[i] != '' && lines[i] != '\n')
+				if (line != '' && line != '\n')
 				{
-					let item = new PopupMenu.PopupMenuItem(_(lines[i]));
-					let textClicked = lines[i];
+					strip_after = line.lastIndexOf('|');
+					line = line.slice(0,strip_after);
+					let item = new PopupMenu.PopupMenuItem(_(line));
+					let textClicked = line;
 					item.connect('activate', Lang.bind(this,function(){
 						this.menu.close();
 						buttonText.set_text(_("(...)"));
